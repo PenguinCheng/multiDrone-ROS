@@ -1,0 +1,10 @@
+<launch>
+	<!-- First launch mavros -->
+	<include file="$(find mavros)/launch/apm2-sitl.launch">
+	</include>
+
+	<node pkg="spiri_go" type="spiri_go" name="spiri_go" output="screen">
+	</node>
+	<node pkg="spiri_go" type="takeoff_and_land" name="takeoff_and_land" output="screen">
+	</node>
+</launch>

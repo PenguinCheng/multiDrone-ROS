@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="spiri_go" type="spiri_go" name="spiri_go" output="screen">
+	</node>
+</launch>

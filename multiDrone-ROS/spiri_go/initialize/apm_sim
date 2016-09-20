@@ -1,0 +1,98 @@
+#! /bin/bash
+###############################################################################
+## First thing to do in any system, gotta install git to get anything done
+###############################################################################
+
+sudo apt-get update
+sudo apt-get install -y git screen
+
+###############################################################################
+## Ardupilot and simulator installation
+## Taken from http://dev.ardupilot.com/wiki/setting-up-sitl-on-linux/
+###############################################################################
+
+# Download a copy of our own fork of ardupilot
+git clone https://github.com/Pleiades-Spiri/ardupilot.git ~/ardupilot
+
+# Install some required packages for the APM SITL simulator
+sudo apt-get -y install python-matplotlib python-serial python-wxgtk2.8 python-lxml
+sudo apt-get -y install python-scipy python-opencv ccache gawk git python-pip python-pexpect
+sudo pip install pymavlink MAVProxy
+
+# Gotta source the simulator paths
+echo "
+export PATH=\$PATH:\$HOME/ardupilot/Tools/autotest 
+export PATH=/usr/lib/ccache:\$PATH
+" >> ~/.bashrc
+source ~/.bashrc
+
+###############################################################################
+## ROS Installation 
+## Taken from https://pixhawk.org/dev/ros/installation
+###############################################################################
+
+# Add the ROS repository for Trusty(14.04):
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
+
+# Get the official ROS key
+wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
+
+# And install the packages we recommend for having a development environment good for MAVs. 
+# You can install any other project-specific dependencies via rosdep or manually.
+sudo apt-get update
+sudo apt-get install -y ros-indigo-ros-base \
+                        ros-indigo-usb-cam \
+                        ros-indigo-mavlink \
+                        ros-indigo-mavros \
+                        ros-indigo-cv-bridge \
+                        ros-indigo-image-proc \
+                        ros-indigo-tf
+
+# Setup rosdep which makes life a lot easier by auto-installing dependencies wherever possible.
+sudo apt-get install -y python-rosdep
+sudo rosdep init
+rosdep update
+
+# Gotta source the ROS binary path
+echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
+source /opt/ros/indigo/setup.bash
+
+###############################################################################
+## Set up minimal workspace for spiri_go
+## On desktop we want just ONE package in the workspace to minimize compilation issues 
+###############################################################################
+WORKSPACE=~/spiri_ws
+
+# Make workspace directory then "compile" to initialize the ROS workspace
+mkdir -p $WORKSPACE/src
+cd $WORKSPACE/src
+catkin_init_workspace
+cd $WORKSPACE
+catkin_make 
+
+# Download spiri_go package into source 
+cd $WORKSPACE/src
+git clone https://github.com/Pleiades-Spiri/spiri_go.git
+
+# Now compile the one package we have
+cd $WORKSPACE
+catkin_make
+
+# Gotta source the package paths for roslaunch/rosrun to find them
+sh -c "echo 'source $WORKSPACE/devel/setup.bash' >> ~/.bashrc"
+source $WORKSPACE/devel/setup.bash
+
+###############################################################################
+## Commands for running the simulator
+###############################################################################
+
+# Run this to open the simulator (it'll take a while to compile the first time):
+# sim_vehicle.sh --map --console --aircraft test
+
+# Once you're in run this in the mavproxy console
+# to get rid of the 'RC not calibrated' problem:
+# param load ../Tools/autotest/copter_params.parm
+
+# In a different terminal run this to start spiri_go and mavros:
+# roslaunch spiri_go sitl.launch
+

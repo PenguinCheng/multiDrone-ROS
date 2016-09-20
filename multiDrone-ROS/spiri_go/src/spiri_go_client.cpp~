@@ -1,0 +1,39 @@
+/**
+ * simpely takeoff and land
+ */
+
+#include "ros/ros.h"
+#include <actionlib/client/simple_action_client.h>
+#include <actionlib/client/terminal_state.h>
+#include <spiri_go/TakeoffAction.h>
+
+int main(int argc, char **argv) {
+	ros::init(argc, argv, "spiri_go_client");
+	
+	actionlib::SimpleActionClient<spiri_go::TakeoffAction> ac("spiri_take_off", true);  //first param: server name
+
+	ROS_INFO("Waiting for action server(takeOff) to start.");
+
+	ac.waitForServer();	
+	
+	ROS_INFO("Action server started--Taking off!");
+
+	spiri_go::TakeoffGoal goal;
+
+	//set the target height to take off!
+	goal.height = 10;
+	ac.sendGoal(goal);
+
+	//wait for action(takeOff) to return
+	bool is_takeOff_finished = ac.waitForResult(ros::Duration(60.0));
+
+	if(is_takeOff_finished ) {
+		ROS_INFO("reached target height!");
+	}
+	else {
+		ROS_INFO("should set mode Land!");
+	}
+
+	return 0;
+
+}

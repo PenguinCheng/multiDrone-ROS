@@ -1,0 +1,15 @@
+<launch>
+	<!-- First launch mavros -->
+	<include file="$(find mavros)/launch/apm2.launch">
+	</include>
+	
+	<node pkg="px4ros" type="serial_ros.py" name="serial_ros" output="screen">
+	</node>
+	<node pkg="px4ros" type="leader_control_decode.py" name="leader_control_decode" output="screen">
+	</node>
+
+	<node pkg="spiri_go" type="spiri_go" name="spiri_go" output="screen">
+	</node>
+	<node pkg="spiri_go" type="leader" name="leader" output="screen">
+	</node>
+</launch>

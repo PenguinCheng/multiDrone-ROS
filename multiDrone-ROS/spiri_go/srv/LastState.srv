@@ -1,0 +1,6 @@
+# No params
+---
+bool connected
+bool armed
+bool guided
+string mode

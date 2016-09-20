@@ -1,0 +1,40 @@
+<launch>
+ 
+ 	<!-- Launch parameters for Jetson TK1 serial connection -->
+	<arg name="fcu_url" default="serial:///dev/ttyTHS0:921600" />
+	<arg name="gcs_url" default="tcp-l://:14556" />
+	<arg name="tgt_system" default="1" />
+	<arg name="tgt_component" default="1" />
+	<arg name="log_output" default="screen" />
+
+ 	<!-- First launch mavros -->
+ 	<!-- Include instead of node because it already exists and it saves effort -->
+	<include file="$(find mavros)/launch/node.launch">
+		<arg name="pluginlists_yaml" value="$(find mavros)/launch/apm_pluginlists.yaml" />
+		<arg name="config_yaml" value="$(find mavros)/launch/apm_config.yaml" />
+
+		<arg name="fcu_url" value="$(arg fcu_url)" />
+		<arg name="gcs_url" value="$(arg gcs_url)" />
+		<arg name="tgt_system" value="$(arg tgt_system)" />
+		<arg name="tgt_component" value="$(arg tgt_component)" />
+		<arg name="log_output" value="$(arg log_output)" />
+	</include>
+ 
+ 	<!-- Launch camera nodes, but let's do this later -->
+<!-- 	<node name="camera" pkg="usb_cam" type="usb_cam_node">
+		<param name="video_device" value="/dev/video0" />
+		<param name="image_width" value="800" />
+		<param name="image_height" value="600" />
+		<param name="pixel_format" value="mjpeg" />
+		<param name="framerate" value="30" />
+		<param name="camera_frame_id" value="webcam" />
+	</node> 
+	<node name="viewer" pkg="image_view" type="image_view">
+		<remap from="image" to="/camera/image_raw" />
+    </node> -->
+ 
+ 	<!-- Launch SpiriGo -->
+	<node pkg="spiri_go" name="spiri_go" type="spiri_go" output="screen"></node>
+
+</launch>
+

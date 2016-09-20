@@ -1,0 +1,7 @@
+#goal definition
+int32 height
+---
+#result definition
+---
+#feedback
+int32 currentHeight
