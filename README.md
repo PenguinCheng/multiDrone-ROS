@@ -1,7 +1,7 @@
 # multiDrone-ROS
-本工程基于开源飞控程序Ardupilot，以及Mavros，实现多个飞行器的编队控制。
-Package:
-px4ros: 负责数据通信，从串口/网口读写数据，解码接收到的数据
+本工程基于开源飞控程序Ardupilot，以及Mavros，实现多个飞行器的编队控制。 </br>
+Package: </br>
+px4ros: 负责数据通信，从串口/网口读写数据，解码接收到的数据 </br>
 spiri_go: 主程序，程序完整流程和循环控制
 
 # leader参考代码
